@@ -261,7 +261,7 @@ func CompactNonZero(s []int) []int {
 
 // 20
 func InsertAt(s *[]int, i, value int) ([]int, error) {
-	if i > len(*s) {
+	if i > len(*s) || i < 0 {
 		return nil, errors.New("Index out of range")
 	}
 

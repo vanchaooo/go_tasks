@@ -6,6 +6,7 @@ import (
 	"sort"
 	"unicode"
 	"strings"
+	"fmt"
 )
 
 // 1
@@ -156,7 +157,7 @@ func Equal(a, b map[string]int) bool {
 
 // 12
 func Difference(a, b []int) []int {
-	result := make([]int, len(a))
+	result := make([]int, 0, len(a))
 	checkA := make(map[int]struct{}, len(a))
 	checkB := make(map[int]struct{}, len(b))
 
@@ -176,6 +177,7 @@ func Difference(a, b []int) []int {
 		result = append(result, v)
 	}
 
+	fmt.Println(cap(result))
 	return result
 }
 
@@ -212,13 +214,22 @@ func SymmetricDifference(a, b []int) []int {
 	result := make([]int, 0, len(a))
 
 	checkA := make(map[int]struct{})
+	checkB := make(map[int]struct{})
 
 	for _, v := range a {
 		checkA[v] = struct{}{}
 	}
+	for _, v := range b {
+		checkB[v] = struct{}{}
+	}
 
 	for _, v := range b {
 		if _, ok := checkA[v]; !ok {
+			result = append(result, v)
+		}
+	}
+	for _, v := range a {
+		if _, ok := checkB[v]; !ok {
 			result = append(result, v)
 		}
 	}

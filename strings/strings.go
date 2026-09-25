@@ -19,12 +19,13 @@ func StringSize(s string) (bytes int, runes int) {
 
 // 2
 func IsASCII(s string) bool {
-	for i := range s {
-		if i <= 127 {
-			return true
+	for _, r := range s {
+		fmt.Printf("символ: %c, числовое значение: %d\n", r, r)
+		if r > 127 {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
 
@@ -88,7 +89,7 @@ func RemoveRune(s string, target rune) string {
 
 // 7
 func ReplaceRune(s string, old, new rune) string {
-	runes := []rune(strings.ToLower(s))
+	runes := []rune(s)
 
 	for i, v := range runes {
 		if v == old {
@@ -167,7 +168,7 @@ func NormalizeSpaces(s string) string {
 func Contains(s, sub string) bool {
 	check := []rune(s)
 
-	for i := 0; i < len(check)-len([]rune(sub)); i++ {
+	for i := 0; i < len(check)-len([]rune(sub))+1; i++ {
 		if strings.HasPrefix(string(check[i:]), sub) {
 			return true
 		}
