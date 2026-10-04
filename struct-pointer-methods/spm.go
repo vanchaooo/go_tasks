@@ -9,6 +9,7 @@ type User struct {
 	Name string
 	Age int
 	Email string
+	City string
 }
 
 type Point struct {
@@ -56,6 +57,11 @@ type Date struct {
 	Year int
 	Month int
 	Day int
+}
+
+type Employees struct {
+	Name string
+	Salary int
 }
 
 
@@ -218,4 +224,75 @@ func CompareDate(a, b Date) int {
     }
 
     return 0 
+}
+
+// 16
+func FindUserByID(users []User, id int) (User, bool) {
+	if len(users) == 0 || id == 0 {
+		return User{}, false
+	}
+
+	for _, v := range users {
+		if v.ID == id {
+			return v, true
+		}
+	}
+
+	return User{}, false
+}
+
+// 17
+func Adults(users []User) []User {
+	if len(users) == 0 {
+		return []User{}
+	}
+
+	result := []User{}
+	for _, v := range users {
+		if v.Age >= 18 {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+// 18
+func IndexUsers(users []User) map[int]User {
+	if len(users) == 0 {
+		return map[int]User{}
+	}
+
+	result := make(map[int]User)
+	for _, v := range users {
+		result[v.ID] = v
+	}
+	return result
+}
+
+// 19
+func GroupUsersByCity(users []User) map[string][]User {
+	if len(users) == 0 {
+		return map[string][]User{}
+	}
+
+	result := make(map[string][]User)
+    for _, u := range users {
+        result[u.City] = append(result[u.City], u)
+    }
+    return result
+}
+
+// 20
+func HighestPaid(items []Employees) (Employees, bool) {
+	if len(items) == 0 {
+		return Employees{}, false
+	}
+
+	result := items[0]
+	for _, v := range items {
+		if v.Salary > result.Salary {
+			result = v
+		}
+	}
+	return result, true
 }
