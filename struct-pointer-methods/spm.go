@@ -64,6 +64,38 @@ type Employees struct {
 	Salary int
 }
 
+type Task struct {
+	Status string
+}
+
+type OrderItem struct {
+	Name string 
+	Price int
+	Quantity int
+}
+
+type Order struct {
+	ID int;
+	Items []OrderItem
+}
+
+type Cart struct {
+	Items []OrderItem
+}
+
+type Address struct {
+	City string
+	Street string
+	House int
+}
+
+type Person struct {
+	Name string
+	Address Address
+}
+
+
+
 
 
 // 1
@@ -295,4 +327,68 @@ func HighestPaid(items []Employees) (Employees, bool) {
 		}
 	}
 	return result, true
+}
+
+// 21
+func CountByStatus(tasks []Task) map[string]int {
+	result := make(map[string]int)
+
+	for _, v := range tasks {
+		result[v.Status]++
+	}
+	return result
+}
+
+// 22
+func OrderTotal(o Order) int {
+	result := 0
+
+	for _, v := range o.Items {
+		result += v.Price * v.Quantity
+	}
+	return result
+}
+
+// 23
+func CartItemsCount(c Cart) int {
+	result := 0
+
+	for _, v := range c.Items {
+		result += v.Quantity
+	}
+	return result
+}
+
+// 24
+func BestStudent(students []Student) (Student, bool) {
+	if len(students) == 0 {
+		return Student{}, false
+	}
+
+	var bestStudent Student
+	maxAVG := 0.0
+	for _, v := range students {
+		var avg float64
+		if len(v.Grades) > 0 {
+			sum := 0
+			for _, j := range v.Grades {
+				sum += j
+			}
+			avg = float64(sum) / float64(len(v.Grades))
+		}
+
+		if avg > maxAVG {
+			maxAVG = avg
+			bestStudent = v
+		}
+	}
+	return bestStudent, true
+}
+
+// 25
+func SameCity(a, b Person) bool {
+	if a.Address.City == b.Address.City {
+		return true
+	}
+	return false
 }
