@@ -2,16 +2,15 @@ package main
 
 import (
 	"fmt"
-	"packages/maps"
+	// "time"
+	// "packages/maps"
 	// "packages/strings"
 	// "packages/slices"
+	"packages/concurrency"
 )
 
 func main() {
-
-
-	fmt.Println(maps.SymmetricDifference(
-		[]int{1, 1, 2},
-		[]int{2, 3, 3},
-	))
+	nums := []int{2, 9, 3}
+	check := concurrency.CountSteps(nums)
+	fmt.Println(check)
 }
