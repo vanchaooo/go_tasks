@@ -4,13 +4,13 @@ import (
 	"fmt"
 	// "time"
 	// "packages/maps"
-	// "packages/strings"
+	"packages/strings"
 	// "packages/slices"
-	"packages/concurrency"
+	// "packages/concurrency"
 )
 
 func main() {
-	nums := []int{2, 9, 3}
-	check := concurrency.CountSteps(nums)
+	str := "kjzdkasd as"
+	check:= strings.WordFrequency(str)
 	fmt.Println(check)
 }
