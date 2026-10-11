@@ -269,3 +269,155 @@ func InsertAt(s *[]int, i, value int) ([]int, error) {
 
 	return *s, nil
 }
+
+// 21
+func InsertMany(s []int, i int, values []int) ([]int, error) {
+	if len(s) == 0 {
+		return nil, errors.New("Пустой основной слайс")
+	}
+	if i > len(s) {
+		return nil, errors.New("Индекс вне границ основного слайса")
+	}
+
+	result := make([]int, 0, len(s)+len(values))
+	for _, v := range s {
+		result = append(result, v)
+	}
+	for idx:=0; idx<len(values); idx++ {
+		result = append(result[:i+1+idx], values[idx])
+	}
+	return result, nil
+}
+
+// 22
+func DeleteRange(s []int, left, right int) ([]int, error) {
+	if left < 0 || right > len(s) {
+		return nil, errors.New("Индексы за пределами слайса")
+	}
+	if left > right {
+		return s, nil
+	}
+
+	result := make([]int, 0, len(s))
+	for _, v := range s {
+		result = append(result, v)
+	}
+	result = slices.Delete(result, left, right)
+	return result, nil
+}
+
+// 23
+func ReplaceRange(s []int, left, right int, values []int) ([]int, error) {
+	if len(s) == 0 {
+		return nil, errors.New("Исходный слайс пуст")
+	}
+	if left < 0 || right > len(s) {
+		return nil, errors.New("Индексы за пределами слайса")
+	}
+	if left > right {
+		return s, nil
+	}
+
+	result := make([]int, 0, len(s)+len(values))
+	result = append(result, s...)
+	result = slices.Replace(result, left, right, values...)
+	return result, nil
+}
+
+// 24
+func Splice(s []int, start, deleteCount int, values []int) ([]int, error) {
+	if len(s) == 0 {
+		return nil, errors.New("Слайс пуст")
+	}
+	if start > len(s) {
+		return nil, errors.New("Индекс за пределами слайса")
+	}
+
+	result := make([]int, 0, len(s)+len(values))
+	result = append(result, s...)
+	
+	count := deleteCount
+	for _, v := range result {
+		if v == start {
+			result = append(result[:v], result[v+count:]...)
+			result = slices.Insert(result, v, values...)
+			break
+		}
+	}
+
+	return result, nil
+}
+
+// 25
+func Clone(s []int) []int {
+	result := make([]int, 0, len(s))
+	copy(s, result)
+	return result
+}
+
+// 26
+func CloneRange(s []int, left, right int) ([]int, error) {
+	if len(s) == 0 {
+		return nil, errors.New("Слайс пуст")
+	}
+	if left < 0 || right > len(s) || left > right {
+		return nil, errors.New("Ошибка")
+	}
+
+	result := make([]int, 0, len(s))
+	result = append(result, s[left:right]...)
+	return result, nil
+}
+
+// 27
+func Concat(a, b []int) []int {
+	result := slices.Concat(a, b)
+	return result
+}
+
+// 28
+func ConcatMany(parts ...[]int) []int {
+	totalLen := 0
+	for _, v := range parts {
+		totalLen += len(v)
+	}
+
+	result := make([]int, 0, totalLen)
+	for _, v := range parts {
+		result = append(result, v...)
+	}
+	return result
+}
+
+// 29
+func Unique(s []int) []int {
+	if len(s) == 0 {
+		return nil
+	}
+
+	result := make([]int, 0, len(s))
+	for _, v := range s {
+		if !slices.Contains(result, v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+// 30
+func UniqueInPlace(s []int) []int {
+	if len(s) == 0 {
+		return nil
+	}
+
+	check := make(map[int]bool)
+	slow := 0
+	for _, v := range s {
+        if !check[v] {
+            check[v] = true
+            s[slow] = v
+            slow++
+        }
+    }
+	return s[:slow]
+}

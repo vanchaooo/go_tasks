@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	// "slices"
 	// "time"
-	"packages/maps"
+	// "packages/maps"
 	// "packages/strings"
-	// "packages/slices"
+	"packages/slices"
 	// "packages/concurrency"
 )
 
 func main() {
-	str := []string{"dog", "cat", "asdasdasd", "chipicahapa", "dog", "asd"}
-	check:= maps.GroupAnagrams(str)
+	spisok := []int{1,2,3,3,4,5,5}
+	check := slices.UniqueInPlace(spisok)
 	fmt.Println(check)
 }
