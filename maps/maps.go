@@ -2,12 +2,48 @@ package maps
 
 import (
 	"errors"
+	"fmt"
 	"maps"
 	"sort"
-	"unicode"
 	"strings"
-	"fmt"
+	"unicode"
+	"unicode/utf8"
 )
+
+type Row struct {
+	ID int
+	Name string
+	Score int
+}
+
+type ChangeKind string
+
+const (
+    Added ChangeKind = "added"
+    Deleted ChangeKind = "deleted"
+    Changed ChangeKind = "changed"
+)
+
+type Change struct {
+    Key string
+    Kind ChangeKind
+    OldValue string
+    NewValue string
+}
+
+type PatchValue struct {
+    Value string
+    Delete bool
+}
+
+type BiMap struct {
+    stringToInt map[string]int
+    intToString map[int]string
+}
+
+
+
+
 
 // 1
 func CountInts(nums []int) map[int]int {
@@ -386,4 +422,214 @@ func TopKWords(text string, k int) []string {
 		k = len(unique)
 	}
 	return unique[:k]
+}
+
+// 21
+func GroupByParity(nums []int) map[string][]int {
+	if len(nums) == 0 {
+		return nil
+	}
+
+	result := make(map[string][]int)
+	for _, v := range nums {
+		if v % 2 == 0 {
+			result["even"] = append(result["even"], v)
+
+		} else {
+			result["odd"] = append(result["odd"], v)
+		}
+	}
+	return result
+}
+
+// 22
+func GroupByLength(words []string) map[int][]string {
+	if len(words) == 0 {
+		return nil
+	}
+
+	result := make(map[int][]string)
+	for _, v := range words {
+		lenght := utf8.RuneCountInString(v)
+		result[lenght] = append(result[lenght], v)
+	}
+	return result
+}
+
+// 23
+func GroupAnagrams(words []string) [][]string {
+	if len(words) == 0 {
+		return nil
+	}
+
+	result := [][]string{}
+	groups := make(map[string][]string)
+    keys := []string{}
+    for _, v := range words {
+        letters := []rune(v)
+        sort.Slice(letters, func(a, b int) bool {
+            return letters[a] < letters[b]
+        })
+        key := string(letters)
+        if _, ok := groups[key]; !ok {
+            keys = append(keys, key)
+        }
+        groups[key] = append(groups[key], v)
+    }
+
+    for _, key := range keys {
+        result = append(result, groups[key])
+    }
+    return result
+}
+
+// 24
+func MapValues(m map[string]int, f func(int) int) map[string]int {
+	result := make(map[string]int)
+	for k, v := range m {
+		result[k] = f(v)
+	}
+	return result
+}
+
+// 25
+func FilterMap(m map[string]int, keep func(string, int) bool) map[string]int {
+	result := make(map[string]int)
+
+    for key, value := range m {
+        if keep(key, value) {
+            result[key] = value
+        }
+    }
+    return result
+}
+
+// 26
+func Compose(first map[string]string, second map[string]int) map[string]int {
+	result := make(map[string]int)
+
+	for k, _ := range first {
+		if _, ok := second[first[k]]; ok {
+			result[k] = second[k]
+		}
+	}
+	return result
+}
+
+// 27
+func InnerJoin(left map[int]string, right map[int]int) []Row {
+	result := []Row{}
+    for id, name := range left {
+        score, ok := right[id]
+
+        if ok {
+            result = append(result, Row{
+                ID: id,
+                Name: name,
+                Score: score,
+            })
+        }
+    }
+    sort.Slice(result, func(i, j int) bool {
+        return result[i].ID < result[j].ID
+    })
+    return result
+}
+
+// 28
+func Diff(old, current map[string]string) []Change {
+	result := []Change{}
+    keys := make([]string, 0, len(old)+len(current))
+    for key := range old {
+        keys = append(keys, key)
+    }
+    for key := range current {
+        if _, ok := old[key]; !ok {
+            keys = append(keys, key)
+        }
+    }
+
+    sort.Strings(keys)
+	for _, key := range keys {
+		oldValue, oldOK := old[key]
+		newValue, newOK := current[key]
+		switch {
+		case !newOK:
+			result = append(result, Change{
+				Key: key,
+				Kind: Deleted,
+				OldValue: oldValue,
+				NewValue: "",
+			})
+		case !oldOK:
+			result = append(result, Change{
+				Key: key,
+				Kind: Added,
+				OldValue: "",
+				NewValue: newValue,
+			})
+		case oldValue != newValue:
+			result = append(result, Change{
+				Key: key,
+				Kind: Changed,
+				OldValue: oldValue,
+				NewValue: newValue,
+			})
+		}
+	}
+    return result
+}
+
+// 29
+func ApplyPatch(dst map[string]string, patch map[string]PatchValue) {
+    for key, do := range patch {
+        if do.Delete {
+			delete(dst, key)
+		} else {
+			dst[key] = do.Value
+		}
+    }
+}
+
+// 30
+func NewBiMap() *BiMap {
+    return &BiMap{
+        stringToInt: make(map[string]int),
+        intToString: make(map[int]string),
+    }
+}
+
+func (b *BiMap) Put(s string, n int) bool {
+    if v, ok := b.stringToInt[s]; ok && v != n {
+        return false
+    }
+    if v, ok := b.intToString[n]; ok && v != s {
+        return false
+    }
+
+    b.stringToInt[s] = n
+    b.intToString[n] = s
+    return true
+}
+
+func (b *BiMap) GetByString(s string) (int, bool) {
+    v, ok := b.stringToInt[s]
+    return v, ok
+}
+
+func (b *BiMap) GetByInt(n int) (string, bool) {
+    v, ok := b.intToString[n]
+    return v, ok
+}
+
+func (b *BiMap) DeleteByString(s string) bool {
+    n, ok := b.stringToInt[s]
+    if !ok {
+        return false
+    }
+
+    delete(b.stringToInt, s)
+    delete(b.intToString, n)
+
+    return true
 }
