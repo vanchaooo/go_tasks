@@ -421,3 +421,20 @@ func UniqueInPlace(s []int) []int {
     }
 	return s[:slow]
 }
+
+// 31
+func UniqueSortedInPlace(s []int) []int {
+	if len(s) == 0 {
+		return s
+	}
+
+	check := 1
+
+	for i:=1; i<len(s); i++ {
+		if s[i] != s[check-1] {
+			check++
+			s[check] = s[i]
+		}
+	}
+	return s[:check+1]
+}

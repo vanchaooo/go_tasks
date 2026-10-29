@@ -1,8 +1,6 @@
 package spm
 
-import (
-
-)
+import "slices"
 
 type User struct {
 	ID int
@@ -391,4 +389,50 @@ func SameCity(a, b Person) bool {
 		return true
 	}
 	return false
+}
+
+// 26
+func UpdateUserName(users []User, id int, name string) bool {
+	if len(users) == 0 {
+		return false
+	}
+
+	for i := range users {
+		if users[i].ID == id {
+			users[i].Name = name
+			return true
+		} 
+	}
+	return false
+}
+
+// 27
+func RemoveUserByID(users []User, id int) []User {
+	if len(users) == 0 {
+		return nil
+	}
+
+	for i := range users {
+		if users[i].ID == id {
+			return slices.Delete(users, i, i+1)
+		}
+	}
+
+	return users
+}
+
+// 28
+func UniqueUsersByID(users []User) []User {
+	result := make([]User, 0, len(users))
+	seen := make(map[int]struct{})
+
+	for _, v := range users {
+		if _, ok := seen[v.ID]; ok {
+			continue
+		}
+		seen[v.ID] = struct{}{}
+		result = append(result, v)
+	}
+
+	return result
 }

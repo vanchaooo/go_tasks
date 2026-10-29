@@ -6,12 +6,12 @@ import (
 	// "time"
 	// "packages/maps"
 	// "packages/strings"
-	"packages/slices"
-	// "packages/concurrency"
+	// "packages/slices"
+	"packages/concurrency"
 )
 
 func main() {
-	spisok := []int{1,2,3,3,4,5,5}
-	check := slices.UniqueInPlace(spisok)
+	slice := []int{1, 4, 2, 5, 3}
+	check := concurrency.BufferedCopy(slice)
 	fmt.Println(check)
 }

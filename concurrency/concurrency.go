@@ -262,3 +262,54 @@ func CountSteps(steps []int) int {
 	}
 	return result
 }
+
+// 21
+func Bufer() []int {
+	ch := make(chan int, 3)
+
+	ch <- 4
+	ch <- 5
+	ch <- 6
+
+	a := <- ch
+	b := <- ch
+	c := <- ch
+
+	return []int{a, b, c}
+}
+
+// 22
+func ReBufer() []int {
+	ch := make(chan int, 2)
+	result := make([]int, 0, 3)
+
+	ch <- 1
+	ch <- 2
+
+	a := <- ch
+	result = append(result, a)
+
+	ch <- 3
+	b := <- ch
+	c := <- ch
+	result = append(result, b, c)
+
+	fmt.Printf("Len после чтений: %d\n", len(ch))
+	return result
+}
+
+// 23
+func BufferedCopy(nums []int) []int {
+	ch := make(chan int, len(nums))
+	result := make([]int, 0, len(nums))
+
+	for _, v := range nums {
+		ch <- v
+	}
+
+	for range len(nums) {
+		result = append(result, <- ch)
+	}
+
+	return result
+}
