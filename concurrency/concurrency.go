@@ -313,3 +313,43 @@ func BufferedCopy(nums []int) []int {
 
 	return result
 }
+
+// 24
+func BufferedSequence(n int) []int {
+	if n == 0 {
+		return []int{}
+	}
+
+	ch := make(chan int, 2)
+	go func() {
+		for i := 1; i <= n; i++ {
+			ch <- i
+		}
+	}()
+
+	result := make([]int, 0, n)
+	for i := 0; i < n; i++ {
+		result = append(result, <-ch)
+	}
+	return result
+}
+
+// 25
+type Point3 struct { X, Y, Z int }
+
+func EncodePoint(p Point3) [3]int {
+	ch := make(chan int, 1)
+	go func() {
+		ch <- p.X
+		ch <- p.Y
+		ch <- p.Z
+	}()
+
+	result := [3]int{}
+	for i := 0; i < 3; i++ {
+		result[i] = <-ch
+	}
+
+	return result
+}
+
