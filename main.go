@@ -7,19 +7,16 @@ import (
 	// "packages/maps"
 	// "packages/strings"
 	// "packages/slices"
-	// "packages/concurrency"
+	"packages/concurrency"
 )
 
 func main() {
-	// slice := 5
-	// check := concurrency.BufferedSequence(slice)
-	// fmt.Println(check)
-
 	ch := make(chan int)
-
-    go func() {
-		ch <- 10
+	go func() {
+		for i := 1; i < 6; i++ {
+			ch <- i
+		}
+		close(ch)
 	}()
-    fmt.Println(<-ch)
+	fmt.Println(concurrency.CollectRange(ch))
 }
-

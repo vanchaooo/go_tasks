@@ -3,6 +3,7 @@ package concurrency
 import (
 	// "sync"
 	"fmt"
+	"unicode/utf8"
 )
 
 // 1
@@ -353,3 +354,141 @@ func EncodePoint(p Point3) [3]int {
 	return result
 }
 
+// 26
+func StartSquare(n int) chan int {
+	ch := make(chan int, 1)
+
+	go func() {
+		ch <- n*n
+	}()
+
+	return ch
+}
+
+// 27
+func DrainPrepared(ch chan int, count int) []int {
+	if count == 0 {
+		return []int{}
+	}
+
+	result := make([]int, 0, count)
+	for range count {
+		result = append(result, <- ch)
+	}
+	
+	return result
+}
+
+// 28
+func SumWithBuffer(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+
+	ch := make(chan int, 1)
+	go func() {
+		for _, v := range nums {
+			ch <- v
+		}
+	}()
+
+	sum := 0
+	for range nums {
+		sum += <- ch
+	}
+
+	return sum
+}
+
+// 29
+func WordBatch(words []string) int {
+	if len(words) == 0 {
+		return 0
+	}
+
+	ch := make(chan string, len(words))
+	for _, v := range words {
+		ch <- v
+	}
+
+	sum := 0
+	for range words {
+		sum += utf8.RuneCountInString(<- ch)
+	}
+
+	return sum
+}
+
+// 30
+func BufferedPair(a, b string) map[string]int {
+	ch := make(chan string, 2)
+	result := make(map[string]int)
+
+	go func() {
+		ch <- a
+	}()
+	go func() {
+		ch <- b
+	}()
+
+	for range 2 {
+		result[<-ch]++
+	}
+	return result
+}
+
+// 31
+func SendGreeting(name string, out chan<- string) {
+	out <- "Привет, " + name
+}
+
+// 32
+func ReceiveN(in <-chan int, n int) []int {
+	if n == 0 {
+		return []int{}
+	}
+
+	result := make([]int, 0, n)
+	for range n {
+		result = append(result, <- in)
+	}
+	return result
+}
+
+// 33
+func SendAndClose(value int, out chan<- int) {
+	out <- value
+	close(out)
+}
+
+// 34
+func main() {
+	ch := make(chan int)
+
+	go func() {
+		ch <- 0
+		ch <- 5
+		ch <- 0
+	}()
+
+	var result []int
+	for {
+		v, ok := <- ch
+		if !ok {
+			break
+		}
+		result = append(result, v)
+	}
+
+	fmt.Println(result)
+}
+
+// 35
+func CollectRange(in <-chan int) []int {
+	result := make([]int, 0, len(in))
+	for v := range in {
+		result = append(result, v)
+	}
+	
+	return result
+}
