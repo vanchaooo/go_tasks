@@ -11,12 +11,9 @@ import (
 )
 
 func main() {
-	ch := make(chan int)
-	go func() {
-		for i := 1; i < 6; i++ {
-			ch <- i
-		}
-		close(ch)
-	}()
-	fmt.Println(concurrency.CollectRange(ch))
+	count := 0
+	for range concurrency.EmptyInts() {
+		count++
+	}
+	fmt.Println(count)
 }

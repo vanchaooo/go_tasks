@@ -492,3 +492,133 @@ func CollectRange(in <-chan int) []int {
 	
 	return result
 }
+
+// 36
+func ClosedBuffer(nums []int) []int {
+	ch := make(chan int, len(nums))
+	for _, v := range nums {
+		ch <- v
+	}
+	close(ch)
+
+	result := make([]int, 0, len(nums))
+	for v := range ch {
+		result = append(result, v)
+	}
+	return result
+}
+
+// 37
+func EmptyInts() <-chan int {
+	ch := make(chan int)
+	close(ch)
+	return ch
+}
+
+// 38
+func NonNegativePrefix(nums []int) <-chan int {
+	ch := make(chan int)
+	
+	go func() {
+		defer close(ch)
+
+		for _, v := range nums {
+			if v < 0 {
+				return
+			}
+			ch <- v
+		}
+	}()
+
+	return ch
+}
+
+// 39
+func Countdown(n int) <-chan int {
+	ch := make(chan int)
+	go func() {
+		defer close(ch)
+
+		for i := n; i >= 1; i-- {
+			ch <- i
+		}
+	}()
+	return ch
+}
+
+// 40
+// func main() {
+//     done := make(chan struct{})
+
+//     go func() {
+//         fmt.Println("обработка завершена")
+//         close(done)
+//     }()
+
+//     <-done
+//     fmt.Println("выход")
+// }
+
+// 41
+func SumStream(in <-chan int) int {
+	sum := 0
+	for v := range in {
+		sum += v
+	}
+	return sum
+}
+
+// 42
+func MinStream(in <-chan int) (int, bool) {
+	min := 0 
+	found := false
+
+	for v := range in {
+		if !found || v < min {
+			min = v
+			found = true
+		}
+	}
+
+	return min, found
+}
+
+// 43
+func WordCounts(in <-chan string) map[string]int {
+	result := make(map[string]int)
+	for v := range in {
+		result[v]++
+	}
+	return result
+}
+
+// 44
+func JoinStream(in <-chan string, sep string) string {
+	result := ""
+	first := true
+
+	for v := range in {
+		if !first {
+			result += sep
+		}
+
+		result += v
+		first = false
+	}
+
+	return result
+}
+
+// 45
+func UniqueStream(in <-chan int) []int {
+	seen := make(map[int]bool)
+	result := []int{}
+	for v := range in {
+		if !seen[v] {
+			seen[v] = true
+			result = append(result, v)
+		}
+	}
+
+	return result
+}
